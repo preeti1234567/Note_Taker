@@ -1,15 +1,14 @@
-var express = require("express");
-var path = require("path");
-var fs = require("fs");
-const { Console } = require("console");
-var app = express();
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
+const app = express();
 
-var PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
-var notes = [];
+let notes = [];
 
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "/public/index.html"));
@@ -28,13 +27,19 @@ function ReadData() {
 
 app.get("/api/notes", function (req, res) {
   ReadData();
-  console.log(notes);
   return res.json(notes);
 });
-
+//
 app.get("/api/notes/:id", function (req, res) {
-  var savedNotes = notes;
-  res.json(savedNotes[Number(req.params.Id)]);
+  const targetObject = notes.find(
+    (item) => item.id === parseInt(req.params.id)
+  );
+  if(targetObject){
+    res.json(targetObject);
+  }
+  else{
+    return res.status(404).json({ error: "No Record found for id selected" });
+  }
 });
 
 app.get("*", function (req, res) {
@@ -43,29 +48,36 @@ app.get("*", function (req, res) {
 
 //adding new note
 app.post("/api/notes", function (req, res) {
-  var newNote = req.body;
-  if (newNote.title) {
-    notes.push(newNote);
+  var reqData = req.body;
+  if (reqData.title && reqData.text) {
+    var data = {
+      id: getId(),
+      title: reqData.title,
+      text: reqData.text,
+    };
+    notes.push(data);
     updateDb();
-    console.log("Added new note" + newNote.title);
+    console.log("Added new note" + data.title);
     return res.status(201).json({ message: "new record created" });
   }
   return res.status(400).json({ error: "Not valid data" });
 });
 
-
 //deleting notes
 app.delete("/api/notes/:id", function (req, res) {
   if (req.params.id) {
-    console.log(req.params.id);
-    console.log(notes);
-    notes.splice(req.params.id, 1);
-    console.log(notes);
-    updateDb();
-    console.log("Note has been deleted with id no:" + req.params.id);
-    return res.status(200).json({ message: "record deleted" });
+    const targetObject = notes.find(
+      (item) => item.id === parseInt(req.params.id)
+    );
+    if (targetObject) {
+      notes.splice(notes.indexOf(targetObject), 1);
+      updateDb();
+      console.log("Note has been deleted with id no:" + req.params.id);
+      return res.status(200).json({ message: "record deleted" });
+    } else {
+      return res.status(404).json({ error: "No Record found for id selected" });
+    }
   }
-  return res.status(404).json({ error: "Not valid id" });
 });
 
 function updateDb() {
@@ -73,6 +85,16 @@ function updateDb() {
     if (err) throw err;
     return true;
   });
+}
+
+function getId() {
+  if (notes.length === 0) {
+    return 1;
+  } else {
+    let lastDataInArray = notes.pop();
+    notes.push(lastDataInArray);
+    return lastDataInArray.id + 1;
+  }
 }
 
 app.listen(PORT, function () {

@@ -71,7 +71,9 @@ var handleNoteDelete = function(event) {
     .parent(".list-group-item")
     .data();
 
-  if (activeNote.id === note.id) {
+    console.log(note);
+    
+    if (activeNote.id === note.id) {
     activeNote = {};
   }
 
