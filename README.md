@@ -1,5 +1,5 @@
 # Note-Taker 
-This is the application that can write, save, and delete notes. This application will use an express backend and save and retrieve note data from a JSON file.
+This is the application that can write, save, and delete notes. This application will use an express backend and save and retrieve note data from a JSON file. When we click on the stored data listed on the left side it will show the details in the right side . When we click the delete icon it will delete the data and when we add the data and save, it will save in the database db.json file.
 
 ##Getting Started
 
@@ -15,7 +15,7 @@ This is the application that can write, save, and delete notes. This application
 
 ## Project Detail
 
-* The following HTML routes have been created :
+* The following HTML routes have been made in this project:
 
   * GET `/notes` - return the `notes.html` file.
 
@@ -33,9 +33,9 @@ This is the application that can write, save, and delete notes. This application
   
   By default "/" route is opened which is a starting point of my application.
 
-My Portfolio Website Link ->  (heroku link)
+My Portfolio Website Link ->  (https://notesrecord.herokuapp.com/)
 
-![NoteTaker Demo](noteTaker1.gif)
+![NoteTaker Demo](notetakerdemo.gif)
 
 
 
